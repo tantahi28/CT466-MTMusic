@@ -1,10 +1,14 @@
 const Supertokens = require("supertokens-node");
 const { middleware, errorHandler, SessionRequest } = require("supertokens-node/framework/express");
+const { verifySession } = require('supertokens-node/recipe/session/framework/express');
 const Session = require("supertokens-node/recipe/session");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 const Dashboard = require("supertokens-node/recipe/dashboard");
 const UserRoles = require("supertokens-node/recipe/userroles");
 const UserMetadata = require("supertokens-node/recipe/usermetadata");
+const { getSession } = require("supertokens-node/recipe/session");
+// const getNewJWTPair = require('supertokens-node')
+// const createNewSession = require('supertokens-node')
 
 
 
@@ -62,7 +66,7 @@ Supertokens.init({
 });
 
 app.use(cors({
-    origin: "http://localhost:${port}",
+    origin: "http://localhost:3000",
     allowedHeaders: ["content-type", ...Supertokens.getAllCORSHeaders()],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
@@ -71,6 +75,23 @@ app.use(cors({
 
 // IMPORTANT: CORS should be before the below line.
 app.use(middleware());
+
+// An example API that requires session verification
+app.get("/sessioninfo", verifySession(), async (req, res) => {
+    let session = req.session;
+    res.send({
+        sessionHandle: session.getHandle(),
+        userId: session.getUserId(),
+        accessTokenPayload: session.getAccessTokenPayload(),
+    });
+});
+
+// This API is used by the frontend to create the tenants drop down when the app loads.
+// Depending on your UX, you can remove this API.
+app.get("/tenants", async (req, res) => {
+    let tenants = await Multitenancy.listAllTenants();
+    res.send(tenants);
+});
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
@@ -94,20 +115,29 @@ const db = require('./config/db');
 db.connect();
 
 
-// An example API that requires session verification
-app.get("/sessioninfo", middleware(), async (req, res) => {
-    let session = req.session;
+app.get("/usermetadata", verifySession(), async (req, res) => {
+    try {
+        const session = await getSession(req, res);
+        console.log("session:", session)
+        const userId =session.getUserId();
+        // const userId = 'd4fc9ed1-efe4-4aac-b405-70af274b9dc6'
 
-    if (session) {
-        res.send({
-            sessionHandle: session.getHandle(),
-            userId: session.getUserId(),
-            accessTokenPayload: session.getAccessTokenPayload(),
-        });
-    } else {
-        res.status(404).send("Session not found");
+
+        // Giả sử bạn có một phương thức getUserMetadata trong UserMetadata để lấy thông tin từ cơ sở dữ liệu
+        const  metadata  = await UserMetadata.getUserMetadata(userId);
+
+        // In thông tin ra console log
+        console.log("User Metadata:", metadata);
+
+        // Trả về dữ liệu cho người dùng, trong trường hợp này là JSON chứa thông tin metadata
+        res.json(metadata);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
 
 // Add this AFTER all your routes
 app.use(errorHandler())

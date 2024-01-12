@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
+import Home from "./Home";
+import { PreBuiltUIList, SuperTokensConfig, ComponentWrapper } from "./config";
+
+SuperTokens.init(SuperTokensConfig);
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <SuperTokensWrapper>
+            <ComponentWrapper>
+                <div className="App app-container">
+                    <Router>
+                        <div className="fill">
+                            <Routes>
+                                {/* This shows the login UI on "/auth" route */}
+                                {getSuperTokensRoutesForReactRouterDom(require("react-router-dom"), PreBuiltUIList)}
+
+                                <Route
+                                    path="/"
+                                    element={
+                                        /* This protects the "/" route so that it shows
+                                    <Home /> only if the user is logged in.
+                                    Else it redirects the user to "/auth" */
+                                        <SessionAuth>
+                                            <Home />
+                                        </SessionAuth>
+                                    }
+                                />
+                            </Routes>
+                        </div>
+                    </Router>
+                </div>
+            </ComponentWrapper>
+        </SuperTokensWrapper>
+    );
 }
 
 export default App;
