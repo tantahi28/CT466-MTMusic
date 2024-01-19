@@ -1,8 +1,8 @@
-import { Sequelize, DataTypes } from 'sequelize';
-import User from './User';
-import Song from './Song';
+const { sequelize, DataTypes } = require('../../config/dbconfig');
+const User = require('./User');
+const Song = require('./Song');
 
-const Favourite = Sequelize.define('Favourite', {
+const Favourite = sequelize.define('Favourite', {
   user_id: {
     type: DataTypes.STRING(36),
     allowNull: false,
@@ -31,15 +31,13 @@ const Favourite = Sequelize.define('Favourite', {
   timestamps: false,
 });
 
-// Thiết lập quan hệ với bảng AllAuthRecipeUsers
 Favourite.belongsTo(User, {
-  foreignKey: 'user_id',
-  targetKey: 'user_id',
-});
+    foreignKey: ['user_id', 'tenant_id', 'app_id'],
+    targetKey: ['user_id', 'tenant_id', 'app_id'],
+  });
 
-// Thiết lập quan hệ với bảng Song
 Favourite.belongsTo(Song, {
   foreignKey: 'song_id',
 });
 
-export default Favourite;
+module.exports = Favourite;

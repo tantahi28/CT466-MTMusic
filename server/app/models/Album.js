@@ -1,7 +1,7 @@
-import { Sequelize, DataTypes } from 'sequelize';
-import Genre from './Genre'; 
+const { sequelize, DataTypes } = require('../../config/dbconfig');
+const Genre = require('./Genre');
 
-const Album = Sequelize.define('Album', {
+const Album = sequelize.define('Album', {
   album_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -37,4 +37,4 @@ Album.belongsTo(Genre, {
   foreignKey: 'genre_id'
 });
 
-export default {Album}
+module.exports = Album;

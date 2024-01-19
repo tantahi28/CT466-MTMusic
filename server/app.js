@@ -17,6 +17,9 @@ const express = require('express')
 const logger = require('morgan')
 const cors = require("cors");
 
+const db = require('./config/db');
+const route = require('./routes')
+
 
 //Environment variables
 require('dotenv').config();
@@ -111,8 +114,9 @@ app.get('/', (req, res) => {
 })
 
 
-const db = require('./config/db');
 db.connect();
+//Routes init
+route(app);
 
 
 app.get("/usermetadata", verifySession(), async (req, res) => {

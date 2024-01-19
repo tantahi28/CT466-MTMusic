@@ -1,6 +1,6 @@
-import { Sequelize, DataTypes } from 'sequelize';
+const { sequelize, DataTypes } = require('../../config/dbconfig');
 
-const User = Sequelize.define('User', {
+const User = sequelize.define('User', {
   app_id: {
     type: DataTypes.STRING(64),
     allowNull: false,
@@ -22,5 +22,4 @@ const User = Sequelize.define('User', {
   timestamps: false,
 });
 
-
-export default User;
+module.exports = User;

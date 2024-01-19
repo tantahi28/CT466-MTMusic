@@ -1,9 +1,9 @@
-import { Sequelize, DataTypes } from 'sequelize';
-import User from './User'; 
-import Genre from './Genre'; 
-import Song from './Song'; 
+const { sequelize, DataTypes } = require('../../config/dbconfig');
+const User = require('./User');
+const Genre = require('./Genre');
+const Song = require('./Song');
 
-const Playlist = Sequelize.define('Playlist', {
+const Playlist = sequelize.define('Playlist', {
   user_id: {
     type: DataTypes.STRING(36),
     allowNull: false,
@@ -38,9 +38,9 @@ const Playlist = Sequelize.define('Playlist', {
 });
 
 Playlist.belongsTo(User, {
-  foreignKey: 'user_id',
-  targetKey: 'user_id',
-});
+    foreignKey: ['user_id', 'tenant_id', 'app_id'],
+    targetKey: ['user_id', 'tenant_id', 'app_id'],
+  });
 
 Playlist.belongsTo(Genre, {
   foreignKey: 'genre_id',
@@ -50,4 +50,4 @@ Playlist.belongsTo(Song, {
   foreignKey: 'song_id',
 });
 
-export default Playlist;
+module.exports = Playlist;

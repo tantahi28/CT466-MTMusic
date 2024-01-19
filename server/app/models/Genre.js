@@ -1,6 +1,6 @@
-import { Sequelize, DataTypes } from 'sequelize';
+const { sequelize, DataTypes } = require('../../config/dbconfig');
 
-const Genre = Sequelize.define('Genre', {
+const Genre = sequelize.define('Genre', {
   genre_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -20,4 +20,4 @@ const Genre = Sequelize.define('Genre', {
   timestamps: false
 });
 
-export default {Genre};
+module.exports = Genre;
