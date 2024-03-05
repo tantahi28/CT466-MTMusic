@@ -3,8 +3,9 @@ import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
-import Home from "./Home";
+import MainLayout from "./components/Layouts/MainLayout";
 import { PreBuiltUIList, SuperTokensConfig, ComponentWrapper } from "./config";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 SuperTokens.init(SuperTokensConfig);
 
@@ -26,7 +27,7 @@ function App() {
                                     <Home /> only if the user is logged in.
                                     Else it redirects the user to "/auth" */
                                         <SessionAuth>
-                                            <Home />
+                                            <MainLayout />
                                         </SessionAuth>
                                     }
                                 />

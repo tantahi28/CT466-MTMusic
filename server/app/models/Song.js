@@ -2,7 +2,7 @@ const { sequelize, DataTypes } = require('../../config/dbconfig');
 const Album = require('./Album'); 
 const Genre = require('./Genre'); 
 
-const Song = Sequelize.define('Song', {
+const Song = sequelize.define('Song', {
   song_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

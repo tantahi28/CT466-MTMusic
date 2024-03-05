@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getApiDomain } from "../config";
+import { getApiDomain } from "../../config";
 
 export default function CallAPIView() {
     async function callAPIClicked() {

@@ -1,7 +1,7 @@
-const testRouter = require ('./test');
+const songRouter = require ('./song');
 
 function route(app) {
-    app.use('/test', testRouter)
+    app.use('/song', songRouter)
 }
 
 module.exports = route;

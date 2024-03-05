@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { signOut } from "supertokens-auth-react/recipe/session";
-import { recipeDetails } from "../config";
+import { recipeDetails } from "../../config";
 import CallAPIView from "./CallAPIView";
 
 export default function SuccessView(props) {
