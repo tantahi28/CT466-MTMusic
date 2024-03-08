@@ -4,7 +4,8 @@ const router = express.Router();
 const songController = require('../app/controllers/songController');
 
 router.route('/')
-    .get(songController.findAll);
+    .get(songController.findAll)
+    .post(songController.create)
 
 
 router.route('/:id')

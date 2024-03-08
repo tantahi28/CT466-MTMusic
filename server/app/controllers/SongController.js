@@ -42,36 +42,34 @@ class SongController {
     }
     
 
-    // [POST] /songs
+    // [POST] /song
     async create(req, res, next) {
-        if (!title || !artist || !album || !duration || !genre) {
-            throw new ApiError(400, "Please fill in the information");
-        }
         try {
+            const { title, artist, genreId, albumId, isVip } = req.body;
+            if (!title || !artist || !genreId) {
+                throw new ApiError(400, "Please fill in the information");
+            }
+
+            // new song
+            const newSong = new Song({
+                title: title,
+                artist: artist,
+                image_path: image_path,
+                audio_path: audio_path,
+                is_vip: isVip,
+                genre_id: genreId,
+                album_id: albumId,
+            });
             uploadMultiple(req, res, async (error) => {
                 if (error) return next(error);
 
-                const { title, artist, genre_id, album_id, is_vip } = req.body;
-
-                const image_path = req.files['urlImg']
-                    ? '/uploads/' + req.files['urlImg'][0].filename
-                    : null;
-
-                const audio_path = req.files['urlSong']
-                    ? '/uploads/' + req.files['urlSong'][0].filename
-                    : null;
-
-                // new song
-                const newSong = new Song({
-                    title: title,
-                    artist: artist,
-                    image_path: image_path,
-                    audio_path: audio_path,
-                    is_vip: is_vip,
-                    genre_id: genre_id,
-                    album_id: album_id,
-                });
-
+                // Update file paths 
+                if (req.files['urlImg']) {
+                    newSong.image_path = '/uploads/' + req.files['urlImg'][0].filename;
+                }
+                if (req.files['urlSong']) {
+                    newSong.audio_path = '/uploads/' + req.files['urlSong'][0].filename;
+                }
                 // save
                 const savedSong = await newSong.save();
                 res.status(201).json({ song: savedSong });
@@ -85,7 +83,7 @@ class SongController {
     // [PUT] /songs/:id
     async edit(req, res, next) {
         const id = req.params.id;
-        const { title, artist, genre_id, album_id, is_vip } = req.body;
+        const { title, artist, genreId, albumId, isVip } = req.body;
 
         try {
             // check song exist
@@ -99,9 +97,9 @@ class SongController {
 
             editSong.title = title;
             editSong.artist = artist;
-            editSong.album_id = album_id;
-            editSong.is_vip = is_vip;
-            editSong.genre_id = genre_id;
+            editSong.album_id = albumId;
+            editSong.is_vip = isVip;
+            editSong.genre_id = genreId;
 
             // Check if there are files to upload
             uploadMultiple(req, res, async (error) => {
