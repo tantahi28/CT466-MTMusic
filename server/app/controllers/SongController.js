@@ -5,7 +5,7 @@ const uploadMultiple = require("../../utils/uploadMultiple")
 const deleteUpload = require("../../utils/deleteUpload")
 
 class SongController {
-    //[GET] /songs/:id
+    //[GET] /song/:id
     async findOne(req, res, next) {
         try {
             // id
@@ -28,7 +28,7 @@ class SongController {
         }
     }
 
-    // [GET] /songs
+    // [GET] /song
     async findAll(req, res, next) {
         try {
             const songs = await Song.findAll();
@@ -45,31 +45,35 @@ class SongController {
     // [POST] /song
     async create(req, res, next) {
         try {
-            const { title, artist, genreId, albumId, isVip } = req.body;
-            if (!title || !artist || !genreId) {
-                throw new ApiError(400, "Please fill in the information");
-            }
-
-            // new song
-            const newSong = new Song({
-                title: title,
-                artist: artist,
-                image_path: image_path,
-                audio_path: audio_path,
-                is_vip: isVip,
-                genre_id: genreId,
-                album_id: albumId,
-            });
             uploadMultiple(req, res, async (error) => {
+                const { title, artist, genreId, albumId, isVip } = req.body;
+        
+                if (!title || !artist || !genreId) {
+                    throw new ApiError(400, "Please fill in the information");
+                }
+
                 if (error) return next(error);
 
-                // Update file paths 
-                if (req.files['urlImg']) {
-                    newSong.image_path = '/uploads/' + req.files['urlImg'][0].filename;
-                }
-                if (req.files['urlSong']) {
-                    newSong.audio_path = '/uploads/' + req.files['urlSong'][0].filename;
-                }
+
+                const image_path = req.files['urlImg']
+                    ? '/uploads/' + req.files['urlImg'][0].filename
+                    : null;
+
+                const audio_path = req.files['urlSong']
+                    ? '/uploads/' + req.files['urlSong'][0].filename
+                    : null;
+
+                // new song
+                const newSong = new Song({
+                    title: title,
+                    artist: artist,
+                    image_path: image_path,
+                    audio_path: audio_path,
+                    is_vip: isVip,
+                    genre_id: genreId,
+                    album_id: albumId,
+                });
+
                 // save
                 const savedSong = await newSong.save();
                 res.status(201).json({ song: savedSong });
@@ -80,37 +84,40 @@ class SongController {
         }
     }
 
-    // [PUT] /songs/:id
+    // [PUT] /song/:id
     async edit(req, res, next) {
-        const id = req.params.id;
-        const { title, artist, genreId, albumId, isVip } = req.body;
-
         try {
-            // check song exist
-            const editSong = await Song.findOne({ where: { song_id: id } });
-
-            if (!editSong) {
-                return next(
-                    new ApiError(404, "Song not found!")
-                );
-            }
-
-            editSong.title = title;
-            editSong.artist = artist;
-            editSong.album_id = albumId;
-            editSong.is_vip = isVip;
-            editSong.genre_id = genreId;
-
-            // Check if there are files to upload
             uploadMultiple(req, res, async (error) => {
+                
+                const id = req.params.id;
+                const { title, artist, genreId, albumId, isVip } = req.body;
+                // check song exist
+                const editSong = await Song.findOne({ where: { song_id: id } });
+    
+                if (!editSong) {
+                    return next(
+                        new ApiError(404, "Song not found!")
+                    );
+                }
+    
+                editSong.title = title;
+                editSong.artist = artist;
+                editSong.album_id = albumId;
+                editSong.is_vip = isVip;
+                editSong.genre_id = genreId;
                 if (error) return next(error);
+
+                let imagePath = 'D:/atSchool/CT466-MTMusic/server/public' + editSong.image_path;
+                let audioPath = 'D:/atSchool/CT466-MTMusic/server/public' + editSong.audio_path;
 
                 // Update file paths if they exist in the request
                 if (req.files['urlImg']) {
+                    deleteUpload(imagePath);
                     editSong.image_path = '/uploads/' + req.files['urlImg'][0].filename;
                 }
 
                 if (req.files['urlSong']) {
+                    deleteUpload(audioPath);
                     editSong.audio_path = '/uploads/' + req.files['urlSong'][0].filename;
                 }
 
@@ -128,7 +135,7 @@ class SongController {
 
 
 
-    // [DELETE] /songs/:id
+    // [DELETE] /song/:id
     async delete(req, res, next) {
         try {
             const id = req.params.id;
@@ -140,9 +147,12 @@ class SongController {
                 return next(new ApiError(404, "Song doesn't exist!"));
             }
 
+            let imagePath = 'D:/atSchool/CT466-MTMusic/server/public' + songToDelete.image_path;
+            let audioPath = 'D:/atSchool/CT466-MTMusic/server/public' + songToDelete.audio_path;
+
             // delete files
-            deleteUpload(songToDelete.image_path);
-            deleteUpload(songToDelete.audio_path);
+            deleteUpload(imagePath);
+            deleteUpload(audioPath);
 
             // delete song record
             const deletedSong = await Song.destroy({ where: { song_id: id } });
