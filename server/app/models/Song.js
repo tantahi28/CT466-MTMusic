@@ -1,49 +1,56 @@
-const { sequelize, DataTypes } = require('../../config/dbconfig');
-const Album = require('./Album'); 
-const Genre = require('./Genre'); 
+const {sequelize,  Model, DataTypes} = require('../../config/dbconfig');
+const Album = require('./Album');
+const Genre = require('./Genre');
 
-const Song = sequelize.define('Song', {
-  song_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
+class Song extends Model {
+
+
+}
+
+Song.init(
+  {
+    song_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    artist: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    album_id: {
+      type: DataTypes.INTEGER,
+    },
+    genre_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    audio_path: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    image_path: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    is_vip: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  artist: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  album_id: {
-    type: DataTypes.INTEGER,
-  },
-  genre_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  audio_path: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  image_path: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  is_vip: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+  {
+    sequelize,
+    modelName: 'Song',
+    tableName: 'song',
+    underscored: false,
+    timestamps: false,
   }
-}, {
-  tableName: 'song',
-  underscored: false,
-  timestamps: false
-});
-
-Song.belongsTo(Genre, { foreignKey: 'genre_id' });
-Song.belongsTo(Album, { foreignKey: 'album_id' });
+);
 
 module.exports = Song;
