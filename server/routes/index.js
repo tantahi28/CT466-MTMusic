@@ -1,4 +1,5 @@
 const { verifySession } = require('supertokens-node/recipe/session/framework/express');
+const isAdmin = require("../app/middlewares/isAdmin")
 
 const songRouter = require ('./song');
 const userRouter = require('./user');
@@ -11,9 +12,10 @@ function route(app) {
     app.use('/user', verifySession(), userRouter);
     app.use('/song', songRouter)
     app.use('/genre', genreRouter)
-    app.use('/playlist', verifySession(), playlistRouter)
+    app.use('/playlist', playlistRouter)
     app.use('/favourite', verifySession(), favouriteRouter)
     app.use('/album', albumRouter)
+    app.use('/admin', isAdmin, albumRouter)
 }
 
-module.exports = route;
+module.exports = route; 

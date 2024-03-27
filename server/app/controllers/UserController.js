@@ -1,8 +1,8 @@
 require('dotenv/config');
 const ApiError = require('../api-error');
 const supertokens = require("supertokens-node");
-const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const UserRoles = require("supertokens-node/recipe/userroles");
+const UserMetadata = require("supertokens-node/recipe/usermetadata");
 const ThirdPartyEmailPassword = require("supertokens-node/recipe/thirdpartyemailpassword");
 
 class UserController {
@@ -24,11 +24,12 @@ class UserController {
                 );
             }
 
+
             const { metadata } = await UserMetadata.getUserMetadata(userId);
             const { roles } = await UserRoles.getRolesForUser("public", userId);
             const permissions = roles==[] ?  await UserRoles.getPermissionsForRole(roles) : [];
 
-            // console.log(userInfo.emails[0]);
+            console.log(roles);
 
             // Add metadata, role, and permission fields to userInfo
             userInfo.metadata = metadata;
@@ -75,7 +76,7 @@ class UserController {
             let isPasswordValid = await ThirdPartyEmailPassword.emailPasswordSignIn(session.getTenantId(), email, oldPassword);
             if (isPasswordValid.status !== "OK") {
                 throw new ApiError(401, "Invalid password!");
-                return ;
+                // return ;
             }
         
         
@@ -101,6 +102,34 @@ class UserController {
             return next(new ApiError(500, "An error occurred!!"));
         }
     }
+
+    async setVip(req, res, next) {
+        try {
+            // Lấy thông tin người dùng từ session
+            const session = req.session;
+            const userId = session.getUserId();
+    
+            // Kiểm tra xem người dùng đã có vai trò VIP chưa
+            const { roles } = await UserRoles.getRolesForUser("public", userId);
+            if (roles.includes("VIP")) {
+                return res.status(400).json({
+                    message: 'User is already a VIP',
+                });
+            }
+    
+            // Thêm vai trò VIP cho người dùng
+            await UserRoles.addRole("public", userId, "VIP");
+    
+            // Trả về thông báo thành công
+            return res.status(200).json({
+                message: 'User is now a VIP',
+            });
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred"));
+        }
+    }
+    
 
 
 }
