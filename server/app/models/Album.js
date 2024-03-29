@@ -1,6 +1,9 @@
 const { sequelize, Model, DataTypes } = require('../../config/dbconfig');
+const AlbumItem = require('./AlbumItem');
 
-class Album extends Model {}
+class Album extends Model {
+
+}
 
 Album.init(
   {

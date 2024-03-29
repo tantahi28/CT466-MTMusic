@@ -1,9 +1,10 @@
 const { sequelize, Model, DataTypes } = require('../../config/dbconfig');
-const User = require('./User');
-const Genre = require('./Genre');
-const Song = require('./Song');
+const PlaylistItem = require('./PlaylistItem');
 
-class Playlist extends Model {}
+
+class Playlist extends Model {
+
+}
 
 Playlist.init(
   {

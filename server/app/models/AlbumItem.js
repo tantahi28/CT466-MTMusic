@@ -10,6 +10,7 @@ AlbumItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+      onDelete: 'CASCADE'
     },
     album_id: {
       type: DataTypes.INTEGER,
@@ -25,13 +26,5 @@ AlbumItem.init(
     timestamps: false,
   }
 );
-
-AlbumItem.belongsTo(Album, {
-  foreignKey: 'album_id',
-});
-
-AlbumItem.belongsTo(Song, {
-  foreignKey: 'song_id',
-});
 
 module.exports = AlbumItem;

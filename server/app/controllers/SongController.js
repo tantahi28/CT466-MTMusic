@@ -146,80 +146,28 @@ class SongController {
             if (!songToDelete) {
                 return next(new ApiError(404, "Song doesn't exist!"));
             }
-
+            
             let imagePath = 'D:/atSchool/CT466-MTMusic/server/public' + songToDelete.image_path;
             let audioPath = 'D:/atSchool/CT466-MTMusic/server/public' + songToDelete.audio_path;
-
+            
             // delete files
             deleteUpload(imagePath);
             deleteUpload(audioPath);
-
+            
+            // Delete playlist items associated with the song
+            // await PlaylistItem.destroy({ where: { song_id: id } });
             // delete song record
-            const deletedSong = await Song.destroy({ where: { song_id: id } });
+            const deletedSong = await Song.delete(id)
 
             if (!deletedSong) {
                 return next(new ApiError(404, "Song doesn't exist!"));
             }
 
+
             res.json({ message: "Song has been deleted" });
         } catch (error) {
             console.error(error);
             return next(new ApiError(500, "An error occurred!!"));
-        }
-    }
-
-
-    // POST /favourite
-    async addFavorite(req, res, next) {
-        try {
-            const songId  = req.body;
-
-            // Check if the favorite already exists
-            const favoriteExists = await Favourite.findOne({
-                where: { user_id: userId, song_id: songId },
-            });
-
-            if (favoriteExists) {
-                return next(new ApiError(400, 'Song already in favorites'));
-            }
-
-            // Create a new favorite record
-            const newFavorite = new Favourite({
-                user_id: userId,
-                song_id: songId,
-            });
-
-            // Save the new favorite
-            const savedFavorite = await newFavorite.save();
-
-            res.status(201).json({ favorite: savedFavorite });
-        } catch (error) {
-            console.error(error);
-            return next(new ApiError(500, 'An error occurred!!'));
-        }
-    }
-
-    // DELETE /favourite
-    async deleteFavorite(req, res, next) {
-        try {
-            const songId = req.body;
-
-            // Find the favorite to be deleted
-            const favoriteToDelete = await Favourite.findOne({
-                where: { user_id: userId, song_id: songId },
-            });
-
-            if (!favoriteToDelete) {
-                return next(new ApiError(404, 'Favorite not found'));
-            }
-
-            // Delete the favorite record
-            await favoriteToDelete.destroy();
-
-            res.json({ message: 'Favorite deleted successfully' });
-        } catch (error) {
-            console.error(error);
-            return next(new ApiError(500, 'An error occurred!!'));
         }
     }
 

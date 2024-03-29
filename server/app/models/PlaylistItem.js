@@ -1,6 +1,4 @@
 const { sequelize, Model, DataTypes } = require('../../config/dbconfig');
-const Playlist = require('./Playlist');
-const Song = require('./Song');
 
 class PlaylistItem extends Model {}
 
@@ -10,6 +8,7 @@ PlaylistItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+      onDelete: 'CASCADE'
     },
     playlist_id: {
       type: DataTypes.INTEGER,
@@ -31,12 +30,5 @@ PlaylistItem.init(
   }
 );
 
-PlaylistItem.belongsTo(Playlist, {
-  foreignKey: 'playlist_id',
-});
-
-PlaylistItem.belongsTo(Song, {
-  foreignKey: 'song_id',
-});
 
 module.exports = PlaylistItem;

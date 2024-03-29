@@ -1,10 +1,25 @@
 const {sequelize,  Model, DataTypes} = require('../../config/dbconfig');
-const Album = require('./Album');
-const Genre = require('./Genre');
+const AlbumItem = require('./AlbumItem');
+const PlaylistItem = require('./PlaylistItem');
+const Favourite = require('./Favourite')
 
 class Song extends Model {
+    static async delete(id) {
+        try {
+            await PlaylistItem.destroy({ where: { song_id: id } });
 
+            await AlbumItem.destroy({ where: { song_id: id } });
 
+            await Favourite.destroy({ where: { song_id: id } });
+
+            await this.destroy({ where: { song_id: id } });
+
+            return true; 
+        } catch (error) {
+            console.error(error);
+            throw new Error("An error occurred while deleting the song and related items");
+        }
+    }
 }
 
 Song.init(
@@ -29,6 +44,7 @@ Song.init(
     genre_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      default: 1
     },
     audio_path: {
       type: DataTypes.STRING,
@@ -52,5 +68,9 @@ Song.init(
     timestamps: false,
   }
 );
+
+
+Song.hasMany(PlaylistItem, { onDelete: 'CASCADE', foreignKey: 'song_id' });
+Song.hasMany(AlbumItem, { onDelete: 'CASCADE', foreignKey: 'song_id' });
 
 module.exports = Song;
