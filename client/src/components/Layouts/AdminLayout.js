@@ -12,10 +12,10 @@ export default function MainLayout() {
                 <div className="col-lg-2 col-md-3 bg-secondary d-none d-md-block vh-100">
                     <Sider/>
                 </div>
-                <div className="col-lg-10 col-md-9 h-100 p-0">
+                <div className=" position-relative col-lg-10 col-md-9 overflow-scroll vh-100 p-0">
                     <Header/>
-                    <Home/> 
-                    {/* <SongList/> */}
+                    <Home/>
+                    <SongList/>
                     <Footer/>
                 </div>
             </div>

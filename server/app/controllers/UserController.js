@@ -29,7 +29,7 @@ class UserController {
             const { roles } = await UserRoles.getRolesForUser("public", userId);
             const permissions = roles==[] ?  await UserRoles.getPermissionsForRole(roles) : [];
 
-            console.log(roles);
+            // console.log(roles);
 
             // Add metadata, role, and permission fields to userInfo
             userInfo.metadata = metadata;
@@ -39,7 +39,7 @@ class UserController {
             
 
             res.status(200).json({ 
-                userInfo: userInfo,
+                userInfo,
                 message: 'User information retrieved successfully' 
             });
         } catch (error) {

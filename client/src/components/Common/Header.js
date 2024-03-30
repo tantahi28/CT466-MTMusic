@@ -4,7 +4,7 @@ import { faEnvelope, faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 
 const Header = () => {
     return (
-        <header>
+        <header className="position-sticky top-0 ">
             {/* Navigation */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container">
