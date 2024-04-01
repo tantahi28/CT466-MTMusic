@@ -1,10 +1,12 @@
 const ApiError = require('../api-error');
 const Song = require('../models/Song');
-
+const path = require('path');
 const uploadMultiple = require("../../utils/uploadMultiple")
 const deleteUpload = require("../../utils/deleteUpload")
+const getAudioDuration = require("../../utils/getAudioDur");
 
 class SongController {
+    
     //[GET] /song/:id
     async findOne(req, res, next) {
         try {
@@ -45,6 +47,7 @@ class SongController {
     // [POST] /song
     async create(req, res, next) {
         try {
+            const publicDir = path.join(__dirname, '../../public');
             uploadMultiple(req, res, async (error) => {
                 const { title, artist, genreId, albumId, isVip } = req.body;
         
@@ -62,6 +65,19 @@ class SongController {
                 const audio_path = req.files['urlSong']
                     ? '/uploads/' + req.files['urlSong'][0].filename
                     : null;
+                
+                let duration = null;
+                let audioPath = path.join(publicDir, audio_path);
+                if (audioPath) {
+                    // Lấy tổng thời gian của file audio
+                    try {
+                        duration = await getAudioDuration(audioPath);
+                    } catch (err) {
+                        console.log(audioPath);
+                        console.error(err);
+                        return next(new ApiError(500, "Failed to get audio duration"));
+                    }
+                }
 
                 // new song
                 const newSong = new Song({
@@ -69,6 +85,7 @@ class SongController {
                     artist: artist,
                     image_path: image_path,
                     audio_path: audio_path,
+                    duration: duration,
                     is_vip: isVip,
                     genre_id: genreId,
                     album_id: albumId,

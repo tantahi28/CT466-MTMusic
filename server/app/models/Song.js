@@ -54,6 +54,11 @@ Song.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    duration: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '00:00'
+    },
     is_vip: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

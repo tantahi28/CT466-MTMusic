@@ -46,7 +46,7 @@ class FavouriteController {
         }
     }
 
-    // DELETE /favourite
+    // DELETE /favourite/:id
     async deleteFavorite(req, res, next) {
         try {
             // session
@@ -59,7 +59,7 @@ class FavouriteController {
                     new ApiError(500, "Should nerver come here!")
                 );
             }
-            const songId = req.body.songId;
+            const songId = req.params.id;
 
             // Find the favorite to be deleted
             const favoriteToDelete = await Favourite.findOne({
