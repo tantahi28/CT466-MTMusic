@@ -43,23 +43,59 @@ class GenreController {
     }
     
 
-    // [POST] /
+    // [POST] /genre
     async create(req, res, next) {
-        
+        try {
+            const { name, description } = req.body;
+            if (!name) {
+                return next(new ApiError(400, "Genre name must be provided."));
+            }
+
+            const newGenre = await Genre.create({ name, description });
+            res.status(201).json(newGenre);
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred while creating the genre."));
+        }
     }
 
-    // [PUT] /
+    // [PUT] /genre/:id
     async edit(req, res, next) {
-       
+        try {
+            const genreId = req.params.id;
+            const { name } = req.body;
+
+            const genre = await Genre.findByPk(genreId);
+            if (!genre) {
+                return next(new ApiError(404, "Genre does not exist."));
+            }
+
+            genre.name = name;
+            await genre.save();
+
+            res.json(genre);
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred while updating the genre."));
+        }
     }
 
-
-
-    // [DELETE] /
+    // [DELETE] /genre/:id
     async delete(req, res, next) {
+        try {
+            const genreId = req.params.id;
+            const genre = await Genre.findByPk(genreId);
+            if (!genre) {
+                return next(new ApiError(404, "Genre does not exist."));
+            }
 
+            await genre.destroy();
+            res.status(204).send(); // No content to send back
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred while deleting the genre."));
+        }
     }
-
 
     
 

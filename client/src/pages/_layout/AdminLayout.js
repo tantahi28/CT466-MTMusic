@@ -1,23 +1,23 @@
 import Header from "../../components/Common/Header";
 import Footer from "../../components/Common/Footer";
 import Sider from "../../components/Common/Sider";
-import Player from "../../components/UI/Player"
-import SongList from "../../components/UI/SongList";
+import { Outlet } from "react-router-dom";
 
 export default function AdminLayout() {
     return (
         <div className="container-fluid p-0">
-            <div className="row">
+            <div className="row p-0">
                 <div className="col-lg-2 col-md-3 bg-secondary d-none d-md-block vh-100">
                     <Sider/>
                 </div>
-                <div className=" position-relative col-lg-10 col-md-9 overflow-scroll vh-100 p-0">
+                <div className=" position-relative col-lg-10 col-md-9 overflow-scroll p-0 vh-100 ">
                     <Header/>
-                    <SongList/>
+                    <div className="container p-3">
+                        <Outlet/>
+                    </div>
                     <Footer/>
                 </div>
             </div>
-            <Player/>
         </div>
     );
 }

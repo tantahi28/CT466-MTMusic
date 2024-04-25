@@ -2,49 +2,31 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import axios from 'axios';
+import FavouriteService from '../../services/FavouriteService';
 
-const SongList = () => {
-    const [songs, setSongs] = useState([]);
+const SongList = ({songs, title}) => {
     const [favorites, setFavorites] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/song');
-                setSongs(response.data.songs);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
 
     useEffect(() => {
         const fetchFavorites = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/favourite');
-                const favSongIds = response.data.songs.map(song => song.song_id);
+                const data = await FavouriteService.getAllSong();
+                const favSongIds = data.songs.map(song => song.song_id);
                 setFavorites(favSongIds);
             } catch (error) {
                 console.error('Error fetching favorites:', error);
             }
         };
         
-        console.log(favorites)
         fetchFavorites();
     }, []);
 
     const handleAddFav = async (songId) => {
         try {
-            await axios.post('http://localhost:3001/favourite', {
-                songId: songId
-            });
-    
+            await FavouriteService.addFavorite({ songId });
             const updatedFavorites = [...favorites, songId];
             setFavorites(updatedFavorites);
-    
             console.log("Thêm yêu thích thành công!");
         } catch (error) {
             console.error('Error adding favorite:', error);
@@ -53,29 +35,25 @@ const SongList = () => {
 
     const handleRemoveFav = async (songId) => {
         try {
-            await axios.delete(`http://localhost:3001/favourite/${songId}`);
-            
+            await FavouriteService.deleteFavorite(songId);
             const updatedFavorites = favorites.filter(favId => favId !== songId);
             setFavorites(updatedFavorites);
-        
             console.log("Xóa yêu thích thành công!");
         } catch (error) {
             console.error('Error removing favorite:', error);
         }
     };
-    
-    
 
     const isFavorite = (songId) => {
         return favorites.includes(songId);
     };
-    
+
     return (
         <div>
-            <h1>Song List</h1>
+            <h2>{title}</h2>
             <Playlist className="w-100 rounded bg-body-secondary p-3 d-flex flex-column">
                 {songs.map(song => (
-                    <Song key={song.song_id} currentSong={song} isFavorite={isFavorite(song.song_id)} handleAddFav={handleAddFav} handleRemoveFav = {handleRemoveFav}/>
+                    <Song key={song.song_id} currentSong={song} isFavorite={isFavorite(song.song_id)} handleAddFav={handleAddFav} handleRemoveFav={handleRemoveFav} />
                 ))}
             </Playlist>
         </div>
@@ -101,7 +79,7 @@ const Song = ({ currentSong, isFavorite, handleAddFav, handleRemoveFav }) => {
 
 
 export const Playlist = styled.div`
-  max-width: 40rem;
+  max-width: 100%;
   max-height: 21rem;
   overflow: overlay;
 
@@ -152,11 +130,11 @@ export const ListBody = styled.div`
 
 export const Title = styled.h3`
   display: block;
-  font-size: 1.25rem;
+  font-size: 1rem;
 `;
 
 export const Author = styled.p`
-  padding: 0.5rem 0;
+  padding: 0 0;
   font-size: 1rem;
 `;
 

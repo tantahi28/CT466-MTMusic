@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SuperTokens, { SuperTokensWrapper } from 'supertokens-auth-react';
@@ -9,12 +8,18 @@ import { AccessDeniedScreen } from 'supertokens-auth-react/recipe/session/prebui
 import { UserRoleClaim } from 'supertokens-auth-react/recipe/userroles';
 import { Routes, BrowserRouter as Router, Route } from 'react-router-dom';
 import { PreBuiltUIList, SuperTokensConfig, ComponentWrapper } from './config';
-import MainLayout from './pages/_layout/MainLayout';
 
+import {
+    MainLayout,
+    AdminLayout
+} from "./pages/_layout";
 
 import {
     Home,
-//   Discover,
+    AdminDashboard,
+    StoredSong,
+    SongUploadForm,
+    SongEdit,
 //   Browse,
 //   Genre,
 //   Artist,
@@ -27,6 +32,7 @@ import {
 //   Notifications,
   Error,
 } from "./pages/_root";
+
 
 
 SuperTokens.init(SuperTokensConfig);
@@ -53,28 +59,20 @@ function App() {
                     <Router>
                         <div className="fill">
                             <Routes>
-                                <Route
-                                    path="/admin*"
-                                    element={
-                                        <AdminRoute>
-                                            <MainLayout></MainLayout>
-                                        </AdminRoute>
-                                    }
-                                />
+                            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+                                <Route index element={<StoredSong />} />
+                                <Route path="song/create" element={<SongUploadForm />} />
+                                <Route path="song/:id" element={<SongEdit />} />
+                            </Route>
 
                                 {/* This shows the login UI on "/auth" route */}
                                 {getSuperTokensRoutesForReactRouterDom(require('react-router-dom'), PreBuiltUIList)}
 
-                                <Route
-                                    path="/"
-                                    element={
-                                        <MainLayout>
-                                            {/* Route con */}
-                                            <Route path="dashboard" element={<SessionAuth><MainLayout /></SessionAuth>} />
-                                            <Route path="playlist" element={<SessionAuth><MainLayout /></SessionAuth>} />
-                                        </MainLayout>
-                                    }
-                                />
+                                <Route path="/" element={<MainLayout/>}>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="playlist" element={<SessionAuth></SessionAuth>} />
+                                </Route>
+
                                 <Route path="*" element={<Error />} />
                             </Routes>
                         </div>

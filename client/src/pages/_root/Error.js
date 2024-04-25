@@ -12,7 +12,7 @@ export default function Error() {
           The page you are looking for might be in another universe.
         </p>
         <div className="mt-6">
-          <Link href="/" className="text-primary hover:underline">
+          <Link to="/" className="text-primary hover:underline">
             Go back home
           </Link>
         </div>
