@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import FavouriteService from '../../services/FavouriteService';
+import { useSongs } from '../../provider/SongProvider';
+
 
 const SongList = ({songs, title}) => {
     const [favorites, setFavorites] = useState([]);
@@ -52,17 +54,33 @@ const SongList = ({songs, title}) => {
         <div>
             <h2>{title}</h2>
             <Playlist className="w-100 rounded bg-body-secondary p-3 d-flex flex-column">
-                {songs.map(song => (
-                    <Song key={song.song_id} currentSong={song} isFavorite={isFavorite(song.song_id)} handleAddFav={handleAddFav} handleRemoveFav={handleRemoveFav} />
-                ))}
+            {songs.map((song, index) => (
+                <Song 
+                    key={song.song_id} 
+                    index={index} 
+                    songs={songs} 
+                    currentSong={song} 
+                    isFavorite={isFavorite(song.song_id)} 
+                    handleAddFav={handleAddFav} 
+                    handleRemoveFav={handleRemoveFav} 
+                />
+            ))}
+
             </Playlist>
         </div>
     );
 };
 
-const Song = ({ currentSong, isFavorite, handleAddFav, handleRemoveFav }) => {
+const Song = ({ currentSong, songs, index, isFavorite, handleAddFav, handleRemoveFav }) => {
+    const { addAllSongs, removeAllSongs, setCurrentSongIndex} = useSongs();
+    const handleSongClick = (index) => {
+        removeAllSongs();
+        addAllSongs(songs);
+        setCurrentSongIndex(index)
+        console.log(songs);
+    };
     return (
-        <MusicList className="mt-2">
+        <MusicList className="mt-2" onClick={() => handleSongClick(index)}>
             <ListSong className={`list__song`}>
                 <ListThumb style={{ backgroundImage: `url(http://localhost:3001${currentSong.image_path})` }}></ListThumb>
                 <ListBody>

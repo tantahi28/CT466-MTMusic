@@ -94,3 +94,6 @@ a {
     color: var(--text-content)!important;
 }
 
+.active {
+    color: var(--primary-color) !important;
+}

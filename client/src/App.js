@@ -1,4 +1,4 @@
-import React from 'react';
+import {useEffect} from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SuperTokens, { SuperTokensWrapper } from 'supertokens-auth-react';
@@ -8,6 +8,8 @@ import { AccessDeniedScreen } from 'supertokens-auth-react/recipe/session/prebui
 import { UserRoleClaim } from 'supertokens-auth-react/recipe/userroles';
 import { Routes, BrowserRouter as Router, Route } from 'react-router-dom';
 import { PreBuiltUIList, SuperTokensConfig, ComponentWrapper } from './config';
+
+
 
 import {
     MainLayout,
