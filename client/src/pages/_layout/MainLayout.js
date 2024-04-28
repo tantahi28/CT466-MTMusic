@@ -17,9 +17,9 @@ export default function MainLayout() {
                     </div>
                     <div className=" position-relative col-lg-10 col-md-9 overflow-scroll p-0 vh-100 ">
                         <Header/>
-                        <div className="container row p-3">
-                            <div className="col-8 m-0">
-                                <Outlet/>
+                        <div className="container row">
+                            <div className="col-8">
+                               <div className='m-3'> <Outlet/></div>
                             </div>
                             <div className="col-4 m-0">
                                 <SiderRight></SiderRight>

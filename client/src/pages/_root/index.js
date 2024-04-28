@@ -11,6 +11,8 @@
 // export { default as Notifications } from "./Notifications";
 export { default as Error } from "./Error";
 export { default as Home } from "./Home";
+export { default as Favourite } from "./Favourites";
+
 export { default as AdminDashboard } from "./Admin/AdminDashboard";
 export { default as StoredSong } from "./Admin/StoredSong";
 export { default as SongUploadForm } from "./Admin/SongUploadForm";

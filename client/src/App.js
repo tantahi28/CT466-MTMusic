@@ -18,7 +18,7 @@ import {
 
 import {
     Home,
-    AdminDashboard,
+    Favourite,
     StoredSong,
     SongUploadForm,
     SongEdit,
@@ -73,6 +73,7 @@ function App() {
                                 <Route path="/" element={<MainLayout/>}>
                                     <Route path="/" element={<Home />} />
                                     <Route path="playlist" element={<SessionAuth></SessionAuth>} />
+                                    <Route path="favourite" element={<SessionAuth><Favourite /></SessionAuth>} />
                                 </Route>
 
                                 <Route path="*" element={<Error />} />
