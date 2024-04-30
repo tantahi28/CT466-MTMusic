@@ -1,25 +1,23 @@
-import {React, useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { React, useEffect, useState } from 'react';
+import { Link, useNavigate  } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { useSessionContext } from 'supertokens-auth-react/recipe/session';
-
 import UserService from '../../services/UserService';
-
-import {Button} from '../../components/Common/Button';
-
-
-
+import { Button } from '../../components/Common/Button';
 
 const Header = () => {
     const [userInfo, setUserInfo] = useState(null);
     const { loading, doesSessionExist } = useSessionContext();
+    const navigate = useNavigate();
+
     const handleSearch = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const searchQuery = formData.get('q');
         console.log('Search query:', searchQuery);
+        navigate(`/search?q=${searchQuery}`);
     };
 
     useEffect(() => {
@@ -27,7 +25,7 @@ const Header = () => {
             try {
                 const userData = await UserService.getUserInfo();
                 setUserInfo(userData);
-                console.log(userData.userInfo.metadata.first_name)   
+                console.log(userData.userInfo.metadata.first_name);
             } catch (error) {
                 console.error('Error fetching user info:', error);
             }
@@ -41,12 +39,12 @@ const Header = () => {
             <div className="header__tool col-8 px-4 d-flex flex-nowrap align-items-center">
                 <form onSubmit={handleSearch} className="w-100 rounded-pill header__search--form">
                     <div className="input-group">
-                        <input 
-                            className="form-control rounded-pill header__tool--search px-3 py-3" 
-                            type="search" 
-                            name="q" 
-                            id="search" 
-                            placeholder="Search, Songs, Album, Artists..." 
+                        <input
+                            className="form-control rounded-pill header__tool--search px-3 py-3"
+                            type="search"
+                            name="q"
+                            id="search"
+                            placeholder="Search, Songs, Album, Artists..."
                             required
                         />
                         <div className="header__search--submit">
@@ -57,18 +55,26 @@ const Header = () => {
                     </div>
                 </form>
                 <div className="header__tool-noti pl-3">
-                    <button className="btn btn-outline-secondary bg-transparent border-0" href=""><FontAwesomeIcon icon={faBell} /></button>
+                    <button className="btn btn-outline-secondary bg-transparent border-0" href="">
+                        <FontAwesomeIcon icon={faBell} />
+                    </button>
                 </div>
             </div>
             <div className="header__info col-4 d-flex justify-content-evenly align-items-center">
                 {!loading && doesSessionExist && userInfo ? (
-                        <h4 className="header__info-username pr-3 font-weight-bolder">
-                            <span className='m-2'>{userInfo.userInfo.metadata.first_name} {userInfo.userInfo.metadata.last_name}</span>
-                            <img src="http://localhost:3001/uploads/logo/logo.png" alt="User avt img" className="header__info-userimg img-fluid rounded-circle ml-2" />
-                        </h4>
+                    <h4 className="header__info-username pr-3 font-weight-bolder">
+                        <span className="m-2">
+                            {userInfo.userInfo.metadata.first_name} {userInfo.userInfo.metadata.last_name}
+                        </span>
+                        <img
+                            src="http://localhost:3001/uploads/logo/logo.png"
+                            alt="User avt img"
+                            className="header__info-userimg img-fluid rounded-circle ml-2"
+                        />
+                    </h4>
                 ) : (
                     <Link to="http://localhost:3000/auth/" className="">
-                            <Button>Login Now</Button>
+                        <Button>Login Now</Button>
                     </Link>
                 )}
             </div>

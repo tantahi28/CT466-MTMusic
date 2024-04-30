@@ -113,7 +113,7 @@
                 const randomIndex = Math.floor(Math.random() * songs.length);
                 setCurrentSongIndex(randomIndex);
                 audioRef.current.currentTime = 0; 
-                audioRef.current.play();
+                // audioRef.current.play();
             } else if (isRepeat) {
                 audioRef.current.currentTime = 0; 
                 audioRef.current.play();
@@ -168,7 +168,7 @@
                 <CdThumb
                     id="#cd__thumb"
                     className="cd__thumb my-3 rounded-circle"
-                    style={{backgroundImage: `url(http://localhost:3001${songs.length > 0 ? songs[currentSongIndex].image_path : ''})`}}
+                    style={{backgroundImage: `url(http://localhost:3001${songs.length > 0 ? songs[currentSongIndex].image_path : '/uploads/logo/logo.png'})`}}
                 ></CdThumb>
             </div>
             <div className="control d-flex flex-column align-content-center px-3e">
@@ -212,30 +212,32 @@
                 <source src="" type="audio/mpeg" />
                 </audio>
                 <div className='mx-4'>
-                    <TimeSlider
+                    {songs.length > 0 && (
+                        <TimeSlider
                             axis="x"
-                        xmax={parseTimeStringToSeconds((songs.length > 0 ? songs[currentSongIndex].duration : '0:0'))}
-                        x={currentTime}
-                        onChange={handleTimeSliderChange}
-                        styles={{
-                        track: {
-                            width: "100%",
-                            backgroundColor: "#e3e3e3",
-                            height: "4px",
-                        },
-                        active: {
-                            backgroundColor: "var(--primary-color)",
-                            height: "4px",
-                        },
-                        thumb: {
-                            marginTop: "-3px",
-                            width: "8px",
-                            height: "8px",
-                            backgroundColor: "#333",
-                            borderRadius: 0,
-                        },
+                            xmax={parseTimeStringToSeconds((songs.length > 0 ? songs[currentSongIndex].duration : '0:0'))}
+                            x={currentTime}
+                            onChange={handleTimeSliderChange}
+                            styles={{
+                            track: {
+                                width: "100%",
+                                backgroundColor: "#e3e3e3",
+                                height: "4px",
+                            },
+                            active: {
+                                backgroundColor: "var(--primary-color)",
+                                height: "4px",
+                            },
+                            thumb: {
+                                marginTop: "-3px",
+                                width: "8px",
+                                height: "8px",
+                                backgroundColor: "#333",
+                                borderRadius: 0,
+                            },
                         }}
-                    />
+                        />
+                    )}
                 </div>
                 <audio
                     ref={audioRef}

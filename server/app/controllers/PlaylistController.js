@@ -19,12 +19,12 @@ class PlaylistController {
                 );
             }
 
-            const {name, description, genreId} = req.body;
+            const {title, description, genreId} = req.body;
 
             // // new playlist
             const newPlaylist = new Playlist({
                 user_id: userId,
-                name: name,
+                title: title,
                 description: description,
                 genre_id: genreId
             });
@@ -42,10 +42,11 @@ class PlaylistController {
         }
     }
 
-    // GET playlist/:id
+    // GET playlist/song/:id
     async findAllSong(req, res, next) {
         try {
             const playlistId = req.params.id;
+            console.log(playlistId);
 
             // Retrieve playlist information
             const playlist = await Playlist.findByPk(playlistId);
@@ -54,40 +55,28 @@ class PlaylistController {
                 return next(new ApiError(404, "Playlist not found"));
             }
 
-            // Retrieve all songs in the playlist
-            const playlistItems = await PlaylistItem.findAll({
-                where: { playlist_id: playlistId },
-                attributes: ['position', 'song_id'], // Include the 'position' column
-                include: [{
-                    model: Song,
-                    attributes: {}, 
-                }],
-                order: [['position', 'ASC']], // Order the result by 'position'
+            // Retrieve all songs in the playlist directly
+            const songs = await Song.findAll({
+                include: {
+                    model: PlaylistItem,
+                    where: { playlist_id: playlistId },
+                    attributes: []
+                },
+                attributes: ['song_id', 'title', 'artist', 'genre_id', 'album_id', 'audio_path', 'image_path', 'is_vip', 'duration'],
+                order: [[PlaylistItem, 'position', 'ASC']]
             });
 
-            // console.log(playlistItems);
-
-            // Extract the songs from the result
-            const songs = playlistItems.map(item => ({
-                song_id: item.song_id,
-                position: item.position,
-                title: item.Song.title,
-                artist: item.Song.artist,
-                genre_id: item.Song.genre_id,
-                album_id: item.Song.album_id,
-                audio_path: item.Song.audio_path,
-                image_path: item.Song.image_path,
-                is_vip: item.Song.is_vip
-                // Include other song columns
-            }));
-
-            // Return playlist information along with the list of songs
-            res.status(200).json({ songs: songs });
+            // Return playlist title and list of songs
+            res.status(200).json({ 
+                title: playlist.title,
+                songs: songs 
+            });
         } catch (error) {
             console.error(error);
             return next(new ApiError(500, "An error occurred!!"));
         }
     }
+
 
     // GET playlist/
     async findAll(req, res, next) {

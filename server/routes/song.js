@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { verifySession } = require('supertokens-node/recipe/session/framework/express');
 const isAdmin = require("../app/middlewares/isAdmin")
-const songController = require('../app/controllers/songController');
+const songController = require('../app/controllers/SongController');
+
+router.get('/search', songController.search);
 
 router.route('/')
     .get(songController.findAll)
@@ -12,5 +14,8 @@ router.route('/:id')
     .get(songController.findOne)
     .put(verifySession(), isAdmin, songController.edit) 
     .delete(verifySession(), isAdmin, songController.delete); 
+
+
+
 
 module.exports = router;

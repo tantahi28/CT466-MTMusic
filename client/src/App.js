@@ -18,11 +18,16 @@ import {
 
 import {
     Home,
+    Search,
     Favourite,
+    PlaylistPage,
     StoredSong,
     SongUploadForm,
     SongEdit,
-//   Browse,
+    Playlist,
+    StoredGenre,
+    GenreCreate,
+    GenreEdit,
 //   Genre,
 //   Artist,
 //   FavouritePlaylists,
@@ -65,6 +70,10 @@ function App() {
                                 <Route index element={<StoredSong />} />
                                 <Route path="song/create" element={<SongUploadForm />} />
                                 <Route path="song/:id" element={<SongEdit />} />
+
+                                <Route path="genre/create" element={<GenreCreate />} />
+                                <Route path="genre/" element={<StoredGenre />} />
+                                <Route path="genre/:id" element={<GenreEdit />} />
                             </Route>
 
                                 {/* This shows the login UI on "/auth" route */}
@@ -72,7 +81,9 @@ function App() {
 
                                 <Route path="/" element={<MainLayout/>}>
                                     <Route path="/" element={<Home />} />
-                                    <Route path="playlist" element={<SessionAuth></SessionAuth>} />
+                                    <Route path="/search" element={<Search />} />
+                                    <Route path="playlist" element={<SessionAuth><PlaylistPage/></SessionAuth>} />
+                                    <Route path="playlist/:id" element={<SessionAuth><Playlist/></SessionAuth>} />
                                     <Route path="favourite" element={<SessionAuth><Favourite /></SessionAuth>} />
                                 </Route>
 

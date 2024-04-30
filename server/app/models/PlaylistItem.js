@@ -30,5 +30,4 @@ PlaylistItem.init(
   }
 );
 
-
 module.exports = PlaylistItem;

@@ -12,4 +12,6 @@ router.route('/:id')
     .put(genreController.edit)
     .delete(genreController.delete)
 
+router.route('/detail/:id')
+    .get(genreController.getOne)
 module.exports = router;

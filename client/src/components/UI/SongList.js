@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import FavouriteService from '../../services/FavouriteService';
+import PlaylistService from '../../services/PlaylistService'; 
 import { useSongs } from '../../provider/SongProvider';
-
 
 const SongList = ({songs, title}) => {
     const [favorites, setFavorites] = useState([]);
-
+    const [playlists, setPlaylists] = useState([]); // State để lưu danh sách playlist
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -20,8 +20,18 @@ const SongList = ({songs, title}) => {
                 console.error('Error fetching favorites:', error);
             }
         };
-        
+
+        const fetchPlaylists = async () => {
+            try {
+                const allPlaylists = await PlaylistService.getAll();
+                setPlaylists(allPlaylists);
+            } catch (error) {
+                console.error('Error fetching playlists:', error);
+            }
+        };
+
         fetchFavorites();
+        fetchPlaylists();
     }, []);
 
     const handleAddFav = async (songId) => {
@@ -63,21 +73,35 @@ const SongList = ({songs, title}) => {
                     isFavorite={isFavorite(song.song_id)} 
                     handleAddFav={handleAddFav} 
                     handleRemoveFav={handleRemoveFav} 
+                    playlists={playlists} // Truyền danh sách playlist xuống component con
                 />
             ))}
-
             </Playlist>
         </div>
     );
 };
 
-const Song = ({ currentSong, songs, index, isFavorite, handleAddFav, handleRemoveFav }) => {
+const Song = ({ currentSong, songs, index, isFavorite, handleAddFav, handleRemoveFav, playlists }) => {
     const { addAllSongs, removeAllSongs, setCurrentSongIndex} = useSongs();
     const handleSongClick = (index) => {
         removeAllSongs();
         addAllSongs(songs);
         setCurrentSongIndex(index)
         console.log(songs);
+    };
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const handleDropdownToggle = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+
+    const addSongToPlaylist = async (playlistId) => {
+        try {
+            await PlaylistService.addSong(playlistId, currentSong.song_id);
+            console.log("Bài hát đã được thêm vào playlist!");
+        } catch (error) {
+            console.error('Error adding song to playlist:', error);
+        }
     };
     return (
         <MusicList className="mt-2" onClick={() => handleSongClick(index)}>
@@ -88,6 +112,16 @@ const Song = ({ currentSong, songs, index, isFavorite, handleAddFav, handleRemov
                     <Author>{currentSong.artist}</Author>
                 </ListBody>
             </ListSong>
+            <DropdownButton onClick={handleDropdownToggle}>
+                <FontAwesomeIcon icon={faPlusCircle} />
+                {dropdownOpen && (
+                <DropdownMenu>
+                    {playlists.map((playlist) => (
+                        <DropdownItem key={playlist.playlist_id} onClick={() => addSongToPlaylist(playlist.playlist_id)}>{playlist.title}</DropdownItem>
+                    ))}
+                </DropdownMenu>
+                )}
+            </DropdownButton>
             <ListFav isFavorite={isFavorite} onClick={() => isFavorite ? handleRemoveFav(currentSong.song_id) : handleAddFav(currentSong.song_id)}>   
                 <FontAwesomeIcon icon={faHeart} />
             </ListFav>
@@ -96,9 +130,10 @@ const Song = ({ currentSong, songs, index, isFavorite, handleAddFav, handleRemov
 };
 
 
+
 export const Playlist = styled.div`
   max-width: 100%;
-  max-height: 21rem;
+  max-height: 100rem;
   overflow: overlay;
 
   &::-webkit-scrollbar {
@@ -167,6 +202,50 @@ export const ListFav = styled.div`
     color: #000;
   }
 `;
+
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 85%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 0;
+  min-width: 100px;
+  z-index: 99999;
+`;
+
+export const DropdownButton = styled.button`
+  background-color: transparent;
+  position: absolute; 
+  right: 43%;
+  border: none;
+  color: #000;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px;
+`;
+
+// Styled Dropdown Item
+export const DropdownItem = styled.div`
+  padding: 5px 10px;
+  color: #000;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
+// Styled Dropdown Separator
+export const DropdownSeparator = styled.div`
+  height: 1px;
+  background-color: #ccc;
+  margin: 5px 0;
+`;
+
 
 export const Active = styled.div`
   color: var(--primary-color) !important;

@@ -32,11 +32,11 @@ export default function Sider() {
                                 Home
                             </Link>
                         </li>
-                        <li className="nav__list-item">
+                        {/* <li className="nav__list-item">
                             <Link to="/album" className="nav__list-item-link text-decoration-none px-4 py-3 d-block">
                                 Album
                             </Link>
-                        </li>
+                        </li> */}
                         <li className="nav__list-item">
                             <Link to="/playlist" className="nav__list-item-link text-decoration-none px-4 py-3 d-block">
                                 Playlist

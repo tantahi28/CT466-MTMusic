@@ -26,7 +26,6 @@ const Home = () => {
     }, []);
 
     
-    // Xác định danh sách bài hát dựa trên thể loại được chọn
     const filteredSongs = activeGenre ?  songs.filter(song => song.genre_id === activeGenre) : [];
     const genreTitle = activeGenre ? genres.find(genre => genre.genre_id === activeGenre)?.name : '';
     

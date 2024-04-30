@@ -97,6 +97,25 @@ class GenreController {
         }
     }
 
+    // [GET] /genre/detail/:id
+    async getOne(req, res, next) {
+        try {
+            const genreId = req.params.id;
+
+            // Check if the genre exists
+            const genre = await Genre.findByPk(genreId);
+            if (!genre) {
+                return next(new ApiError(404, "Genre does not exist."));
+            }
+
+            res.json(genre);
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred while fetching the genre."));
+        }
+    }
+
+
     
 
 }

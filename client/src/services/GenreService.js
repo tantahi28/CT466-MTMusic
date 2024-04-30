@@ -5,6 +5,15 @@ class GenreService {
         this.api = createApiClient(baseUrl);
     }
 
+    async get(id) {
+        try {
+            const response = await this.api.get(`detail/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getAll() {
         try {
             const response = await this.api.get("/");

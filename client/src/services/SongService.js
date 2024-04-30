@@ -58,6 +58,15 @@ class SongService {
             throw error;
         }
     }
+
+    async search(query) {
+        try {
+            const response = await this.api.get(`/search?q=${query}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new SongService();

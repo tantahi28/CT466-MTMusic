@@ -1,6 +1,8 @@
 const ApiError = require('../api-error');
 const Song = require('../models/Song');
 const path = require('path');
+const { Op } = require('sequelize');
+
 const uploadMultiple = require("../../utils/uploadMultiple")
 const deleteUpload = require("../../utils/deleteUpload")
 const getAudioDuration = require("../../utils/getAudioDur");
@@ -188,7 +190,26 @@ class SongController {
         }
     }
 
-    
+    //[GET] /song/search
+    async search(req, res, next) {
+        try {
+            const query = req.query.q;
+            console.log(query)
+            const songs = await Song.findAll({
+                where: {
+                    [Op.or]: [
+                        { title: { [Op.iLike]: `%${query}%` } },
+                        { artist: { [Op.iLike]: `%${query}%` } },
+                    ]
+                }
+            });
+
+            res.json({ songs: songs });
+        } catch (error) {
+            console.error(error);
+            return next(new ApiError(500, "An error occurred!!"));
+        }
+    }
 
     
 

@@ -14,7 +14,7 @@ Playlist.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    title: {
       type: DataTypes.STRING(255),
     },
     user_id: {
@@ -37,6 +37,7 @@ Playlist.init(
     genre_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 1
     },
   },
   {
